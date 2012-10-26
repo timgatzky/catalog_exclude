@@ -34,4 +34,10 @@
  */
 $GLOBALS['TL_HOOKS']['getCatalogDca'][] = array('tl_catalog_fields_catalog_execlude', 'execludeEntries');
 
+/**
+ * @var
+ */
+// list users that should be ignored (id or username or email)
+$GLOBALS['CATALOG_EXECLUDE']['ignore_users'] = array();
+
 ?>

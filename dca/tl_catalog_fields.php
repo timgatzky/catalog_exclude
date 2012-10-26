@@ -52,7 +52,8 @@ class tl_catalog_fields_catalog_execlude extends Backend
 		if($objField->itemTable == 'tl_user' || $objField->type == 'author_field')
 		{
 			$this->import('BackendUser', 'User');
-			if($this->User->isAdmin)
+			// return if user is admin, or in ignore list
+			if($this->User->isAdmin || in_array($this->User->username,$GLOBALS['CATALOG_EXECLUDE']['ignore_users']) || in_array($this->User->id,$GLOBALS['CATALOG_EXECLUDE']['ignore_users']) || in_array($this->User->email,$GLOBALS['CATALOG_EXECLUDE']['ignore_users']) )
 			{
 				return $arrDca;
 			}
