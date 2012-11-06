@@ -36,7 +36,7 @@ class tl_catalog_fields_catalog_execlude extends Backend
 	 * @var
 	 */
 	protected $userField = 'user';
-	protected $strTemplate = 'be_catalog_execlude_js'; 
+	protected $strTemplate = 'be_catalog_entries_execlude_js'; 
 	
 	/**
 	 * Execlude catalog entries that not belong to the current BE user
@@ -65,20 +65,52 @@ class tl_catalog_fields_catalog_execlude extends Backend
 				return $arrDca;
 			}
 			
+			$tableName = $objCatalogResult->tableName;
+			
+			$arrFilter = $this->Session->get('filter');
+			$arrLimit = explode(',',$arrFilter[$tableName]['limit']);
+			$strLimit = $arrFilter[$tableName]['limit'];
+			$arrSorting = $this->Session->get('sorting');;
+			$strSorting = $arrSorting[$tableName];
+			
+			#if(count($beFilter[$tableName]) > 0)
+			#{
+			#	foreach($beFilter[$tableName] as $f => $v)
+			#	{
+			#		if($f == 'limit')
+			#		{
+			#			$arrLimit = explode(',', $v);
+			#		}
+			#	}
+			#}
+			
+			// fetch all entries listed (workaround for Session bug: When entering the page the session won't carry all entries)
+			$objCurrentEntries = $this->Database->prepare("SELECT id FROM ".$objCatalogResult->tableName." ".(strlen($strSorting)? " ORDER BY ".$strSorting : "").(strlen($strLimit)? " LIMIT ".$strLimit : ""))
+							->execute();
+			
 			// fetch all entries NOT property of the current BE user
-			$objEntries = $this->Database->prepare("SELECT * FROM ".$objCatalogResult->tableName." WHERE ".$this->userField." NOT IN(?) ORDER BY sorting")
-							->execute($this->User->id);
+			$objExeclude = $this->Database->prepare("SELECT id FROM ".$objCatalogResult->tableName." WHERE id IN(".implode(',',$objCurrentEntries->fetchEach('id')).") AND user NOT IN(".$this->User->id.") ".(strlen($strSorting)? " ORDER BY ".$strSorting : ""))
+							->execute();
+			
+			$arrExeclude = $objExeclude->fetchEach('id');
 			
 			// return if all entries belong to the user
-			if($objEntries->numRows < 1) 
+			if($objExeclude->numRows < 1) 
 			{
 				return $arrDca;
 			}
 			
-			$arrExeclude = $objEntries->fetchEach('id');
+			// NOT WORKING CORRECTLY! catalog filter is active in BE and only a part of entries is visible
+			#$arrSession = $this->Session->getData();
+			#$arrEntries = $arrSession['CURRENT']['IDS'];
+			#
+			#if(count($arrEntries) > 0)
+			#{
+			#	$arrExeclude = array_intersect($arrEntries,$arrExeclude);
+			#}
 			
 			// store result in session, just for the taste of it (not really nessessary)
-			$this->Session->set('catalog_execlude',$arrEntries);
+			$this->Session->set('catalog_execlude',$objExeclude);
 			
 			// generate mootools script
 			$this->Template = new BackendTemplate($this->strTemplate);

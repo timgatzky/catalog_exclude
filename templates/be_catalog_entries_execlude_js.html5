@@ -2,12 +2,12 @@
 <script type="text/javascript">
 /* <![CDATA[ */
 
-var arrCatalogs = new Array();
-var arrCount = new Array();
+var arrExeclude = new Array();
+var removeFromDOM = true;
+
 <?php // push entry ids to javascript array 
-foreach($this->entries as $id => $v): ?>
-arrCount.push(<?php echo $v['count']; ?>);
-arrCatalogs.push(<?php echo $id; ?>);
+foreach($this->entries as $id): ?>
+arrExeclude.push(<?php echo $id; ?>);
 <?php endforeach; ?>
 
 /**
@@ -24,8 +24,8 @@ window.addEvent('domready', function()
 	{
 		tableView = true;
 	}
-	console.log(arrCount);
-	arrCatalogs.each(function(id, index)
+	
+	arrExeclude.each(function(id, index)
 	{
 		var elem = '';
 		if(!tableView)
@@ -35,28 +35,37 @@ window.addEvent('domready', function()
 		else
 		{
 			elem = getTableRow(id);
-			
-			// overwrite regular catalog count display
-			var count = arrCount[index];
-			var counter = elem.getElement('span.name span');
-			//var num = counter.get('text').split(' ')[1];
-			if(count == 1)
-			{
-				var str = ' ('+count+' '+'<?php echo $GLOBALS['TL_LANG']['tl_catalog_types']['itemSingle']; ?>'+')';
-				counter.set('text',str);	
-			}
-			else
-			{
-				var str = ' ('+count+' '+'<?php echo $GLOBALS['TL_LANG']['tl_catalog_types']['itemPlural']; ?>'+')';
-				counter.set('text',str);	
-			}
-			
-			
 		}
-				
+
+		// avoid js errors
+		if(elem == null)
+		{
+			return false;
+		}
+
+		if(removeFromDOM) 
+		{
+			removeElement(elem);
+		}
+		else 
+		{
+			hideElement(elem); 
+		}
+		
 	});
 
-		
+	// set element to be hidden
+	function hideElement(elem)
+	{
+		elem.setStyle('display','none');
+	}
+	
+	// remove element from DOM
+	function removeElement(elem)
+	{
+		elem.destroy();
+	}
+	
 	// walk through contao table list and find an table row by the id of an entry
 	function getTableRow(id)
 	{	
