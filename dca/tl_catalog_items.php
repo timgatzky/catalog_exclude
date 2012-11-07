@@ -68,20 +68,9 @@ class tl_catalog_items_catalog_execlude extends Backend
 		{
 			$this->userField = $GLOBALS['CATALOG_EXECLUDE']['user_field'];
 		}
-		
-		// fetch all entries that do not belong to the current BE user
-		$objEntries = $this->Database->execute("SELECT * FROM ".$dc->table." WHERE ".$this->userField." IN(".$this->User->id.")");
-						
-		// return if none belongs to the current user
-		if($objEntries->numRows < 1)
-		{
-			return;
-		}
-		
-		$arrEntries = $objEntries->fetchEach('id');
-	
+
 		// set filter
-		$GLOBALS['TL_DCA'][$dc->table]['list']['sorting']['filter'][] = array('user IN(?)',implode(',',$arrEntries));
+		$GLOBALS['TL_DCA'][$dc->table]['list']['sorting']['filter'][] = array($this->userField.' IN(?)',$this->User->id);
 	}
 
 	/**
