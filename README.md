@@ -1,4 +1,4 @@
-catalog_execlude
+catalog_exclude
 ===============
 
 About

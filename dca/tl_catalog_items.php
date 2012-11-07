@@ -28,7 +28,7 @@
  * @filesource
  */
 
-$GLOBALS['TL_DCA']['tl_catalog_items']['config']['oncreate_callback'][] = array('tl_catalog_items_catalog_execlude', 'modifyDCA');
+$GLOBALS['TL_DCA']['tl_catalog_items']['config']['oncreate_callback'][] = array('tl_catalog_items_catalog_exclude', 'modifyDCA');
 
 
 class tl_catalog_items_catalog_execlude extends Backend
@@ -43,12 +43,12 @@ class tl_catalog_items_catalog_execlude extends Backend
 	 * @param object
 	 * @return void
 	 */
-	public function execludeEntries(DataContainer $dc)
+	public function excludeEntries(DataContainer $dc)
 	{
 		$this->import('BackendUser', 'User');
 		
 		// return if user is admin, or in ignore list
-		if($this->User->isAdmin || in_array($this->User->username,$GLOBALS['CATALOG_EXECLUDE']['ignore_users']) || in_array($this->User->id,$GLOBALS['CATALOG_EXECLUDE']['ignore_users']) || in_array($this->User->email,$GLOBALS['CATALOG_EXECLUDE']['ignore_users']) )
+		if($this->User->isAdmin || in_array($this->User->username,$GLOBALS['CATALOG_EXCLUDE']['ignore_users']) || in_array($this->User->id,$GLOBALS['CATALOG_EXCLUDE']['ignore_users']) || in_array($this->User->email,$GLOBALS['CATALOG_EXCLUDE']['ignore_users']) )
 		{
 			return;
 		}
@@ -64,9 +64,9 @@ class tl_catalog_items_catalog_execlude extends Backend
 		}
 		
 		// HOOK set catalog field with user data
-		if(strlen($GLOBALS['CATALOG_EXECLUDE']['user_field']))
+		if(strlen($GLOBALS['CATALOG_EXCLUDE']['user_field']))
 		{
-			$this->userField = $GLOBALS['CATALOG_EXECLUDE']['user_field'];
+			$this->userField = $GLOBALS['CATALOG_EXCLUDE']['user_field'];
 		}
 
 		// set filter
@@ -80,7 +80,7 @@ class tl_catalog_items_catalog_execlude extends Backend
 	 */
 	public function modifyDCA($strTable)
 	{
-		$GLOBALS['TL_DCA'][$strTable]['config']['onload_callback'][] = array('tl_catalog_items_catalog_execlude', 'execludeEntries');
+		$GLOBALS['TL_DCA'][$strTable]['config']['onload_callback'][] = array('tl_catalog_items_catalog_exclude', 'excludeEntries');
 		return $strTable;
 	}
 

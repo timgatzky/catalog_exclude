@@ -33,7 +33,7 @@
  * @var
  */
 // list users that should be ignored (id or username or email)
-$GLOBALS['CATALOG_EXECLUDE']['ignore_users'] = array();
+$GLOBALS['CATALOG_EXCLUDE']['ignore_users'] = array();
 // set your own catalog user field column name (default: user)
-$GLOBALS['CATALOG_EXECLUDE']['user_field'] = '';
+$GLOBALS['CATALOG_EXCLUDE']['user_field'] = '';
 ?>
