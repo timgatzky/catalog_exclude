@@ -31,7 +31,7 @@
 $GLOBALS['TL_DCA']['tl_catalog_items']['config']['oncreate_callback'][] = array('tl_catalog_items_catalog_exclude', 'modifyDCA');
 
 
-class tl_catalog_items_catalog_execlude extends Backend
+class tl_catalog_items_catalog_exclude extends Backend
 {
 	/**
 	 * @var
@@ -63,7 +63,7 @@ class tl_catalog_items_catalog_execlude extends Backend
 			return;
 		}
 		
-		// HOOK set catalog field with user data
+		// HOOK set catalog user field on the fly
 		if(strlen($GLOBALS['CATALOG_EXCLUDE']['user_field']))
 		{
 			$this->userField = $GLOBALS['CATALOG_EXCLUDE']['user_field'];
